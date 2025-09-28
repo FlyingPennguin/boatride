@@ -1,0 +1,158 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sea Voyage Adventure</title>
+  <style>
+    body {
+      background-color: black;
+      color: limegreen;
+      font-family: "Courier New", monospace;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: cyan;
+    }
+    .btn {
+      background: black;
+      color: limegreen;
+      border: 1px solid limegreen;
+      padding: 8px 16px;
+      margin: 5px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+    }
+    .btn:hover {
+      background: limegreen;
+      color: black;
+    }
+    #log {
+      border: 1px solid limegreen;
+      padding: 10px;
+      height: 250px;
+      overflow-y: auto;
+      margin-top: 20px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <h1>⛵ Sea Voyage Adventure 🌊</h1>
+  <p>Travel 500 nautical miles before the year ends!</p>
+
+  <div>
+    <button class="btn" onclick="sail()">⛵ Sail</button>
+    <button class="btn" onclick="rest()">⚓ Rest</button>
+    <button class="btn" onclick="fish()">🎣 Fish</button>
+    <button class="btn" onclick="status()">📊 Status</button>
+    <button class="btn" onclick="quit()">🚪 Quit</button>
+  </div>
+
+  <div id="log">
+    Welcome aboard, Captain! Your voyage begins...
+  </div>
+
+  <script>
+    // Game state
+    let miles = 0;
+    let food = 200;
+    let health = 5;
+    let day = 1;
+
+    function log(message) {
+      const logBox = document.getElementById("log");
+      logBox.innerText += "\n" + message;
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function randomEvent() {
+      const roll = Math.random();
+      if (roll < 0.2) { // 20% chance
+        const loss = Math.floor(Math.random() * 20) + 10;
+        food -= loss;
+        health--;
+        log(`🌊 A storm hit! Lost ${loss} food and -1 health.`);
+      } else if (roll < 0.35) { // 15% chance
+        const stolen = Math.floor(Math.random() * 30) + 10;
+        food -= stolen;
+        log(`☠️ Pirates attacked! They stole ${stolen} food.`);
+      } else if (roll < 0.45) { // 10% chance
+        const found = Math.floor(Math.random() * 40) + 20;
+        food += found;
+        log(`🪙 You found floating treasure with ${found} food supplies!`);
+      } else if (roll < 0.5) { // 5% chance
+        miles += 20;
+        log(`💨 Strong winds push you ahead 20 miles!`);
+      } else {
+        log("🌤 The seas are calm. Nothing unusual happened.");
+      }
+    }
+
+    function sail() {
+      day += 3;
+      miles += Math.floor(Math.random() * 30) + 10; // 10–40 miles
+      food -= 15;
+      log(`Day ${day}: You sailed forward. Total miles: ${miles}.`);
+      randomEvent();
+      checkEnd();
+    }
+
+    function rest() {
+      day += 2;
+      if (health < 5) {
+        health++;
+        log(`Day ${day}: You rested. Health +1.`);
+      } else {
+        log(`Day ${day}: You rested, but your health is already full.`);
+      }
+      food -= 10;
+      randomEvent();
+      checkEnd();
+    }
+
+    function fish() {
+      day += 2;
+      const catchFood = Math.floor(Math.random() * 50) + 20; // 20–70 food
+      food += catchFood;
+      log(`Day ${day}: You caught ${catchFood} lbs of fish!`);
+      checkEnd();
+    }
+
+    function status() {
+      log(`\n=== STATUS ===
+Day: ${day}
+Miles traveled: ${miles}/500
+Food: ${food}
+Health: ${health}`);
+    }
+
+    function quit() {
+      log("You gave up your voyage. Game over.");
+      disableButtons();
+    }
+
+    function checkEnd() {
+      if (miles >= 500) {
+        log("🎉 You reached your destination safely! Victory!");
+        disableButtons();
+      } else if (food <= 0) {
+        log("💀 You ran out of food and starved...");
+        disableButtons();
+      } else if (health <= 0) {
+        log("💀 Your crew's health failed. The voyage ends here.");
+        disableButtons();
+      } else if (day > 100) {
+        log("❄️ Winter storms arrive. Your ship is lost at sea...");
+        disableButtons();
+      }
+    }
+
+    function disableButtons() {
+      const buttons = document.querySelectorAll(".btn");
+      buttons.forEach(btn => btn.disabled = true);
+    }
+  </script>
+</body>
+</html>
